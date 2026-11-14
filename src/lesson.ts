@@ -1,6 +1,7 @@
-// Static lesson data for the M0.1 mockup. It drives no behavior — the UI is a
-// state-preview mockup. Answers live only in the `feedback` object, shown in
-// the Feedback preview (never in the prediction view).
+// Static lesson data for the M1 implementation. The data is static; real
+// behavior is driven by the lesson phase machine (useLesson) and real focus
+// management (useDialogFocus). Answers live only in the `feedback` object and
+// are shown only in the Feedback stage.
 
 export type FocusTargetId =
   | 'opener'
@@ -8,6 +9,8 @@ export type FocusTargetId =
   | 'nameInput'
   | 'closeButton'
   | 'pageBehind'
+
+export type RepairId = 'repairA' | 'repairB'
 
 export interface PredictOption {
   id: FocusTargetId
@@ -17,23 +20,17 @@ export interface PredictOption {
 }
 
 export interface ProposedChange {
-  id: 'changeOne' | 'changeTwo'
+  id: RepairId
   /** Neutral visible name shown in the Choose stage. */
   name: 'Repair A' | 'Repair B'
-  /** Concise proposed-change description shown beneath the neutral name. Reveals
-   * nothing about correctness; which change is correct is shown only in the
-   * Feedback preview. */
+  /** Concise proposed-change description. Reveals nothing about correctness. */
   change: string
-  /** Reserved for the Feedback preview; not shown in the Choose stage. */
+  /** Correctness, shown only in the Feedback stage. */
   correct: boolean
 }
 
-export interface Step {
-  id: 'predict' | 'observe' | 'choose' | 'explain' | 'try'
-  label: string
-}
-
-export type PreviewStage =
+/** Ordered lesson phases. Order is required by the spec. */
+export type LessonPhase =
   | 'predict'
   | 'observe'
   | 'choose'
@@ -41,10 +38,43 @@ export type PreviewStage =
   | 'feedback'
   | 'try'
 
-export interface PreviewOption {
-  id: PreviewStage
+export const phaseOrder: readonly LessonPhase[] = [
+  'predict',
+  'observe',
+  'choose',
+  'explain',
+  'feedback',
+  'try',
+]
+
+export interface PhaseMeta {
+  id: LessonPhase
+  label: string
+  detail: string
+}
+
+export const phaseMeta: readonly PhaseMeta[] = [
+  { id: 'predict', label: 'Predict', detail: 'Where should focus go on open?' },
+  { id: 'observe', label: 'Observe', detail: 'Open the broken fixture; read the real focus.' },
+  { id: 'choose', label: 'Choose a repair', detail: 'Pick a bundled repair.' },
+  { id: 'explain', label: 'Explain', detail: 'Unscored reflection before feedback.' },
+  { id: 'feedback', label: 'Feedback', detail: 'See the answer and which repair is correct.' },
+  { id: 'try', label: 'Try the fix', detail: 'Experience the repaired behavior.' },
+]
+
+/** Five numbered learner steps; feedback sits between Explain and Try. */
+export interface Step {
+  id: 'predict' | 'observe' | 'choose' | 'explain' | 'try'
   label: string
 }
+
+export const steps: readonly Step[] = [
+  { id: 'predict', label: 'Predict' },
+  { id: 'observe', label: 'Observe' },
+  { id: 'choose', label: 'Choose a repair' },
+  { id: 'explain', label: 'Explain' },
+  { id: 'try', label: 'Try the fix' },
+]
 
 export const predictOptions: PredictOption[] = [
   { id: 'opener', label: 'The opener button', hint: 'The button that opened the dialog.' },
@@ -56,14 +86,14 @@ export const predictOptions: PredictOption[] = [
 
 export const proposedChanges: ProposedChange[] = [
   {
-    id: 'changeOne',
+    id: 'repairA',
     name: 'Repair A',
     change:
       'Move focus to the Name input on open; contain Tab/Shift+Tab; wire Escape/close; restore focus to the opener on close.',
     correct: true,
   },
   {
-    id: 'changeTwo',
+    id: 'repairB',
     name: 'Repair B',
     change:
       'Add role="dialog", aria-modal, and an accessible name (aria-label or aria-labelledby) to the dialog.',
@@ -71,24 +101,7 @@ export const proposedChanges: ProposedChange[] = [
   },
 ]
 
-export const steps: readonly Step[] = [
-  { id: 'predict', label: 'Predict' },
-  { id: 'observe', label: 'Observe' },
-  { id: 'choose', label: 'Choose a repair' },
-  { id: 'explain', label: 'Explain' },
-  { id: 'try', label: 'Try the fix' },
-]
-
-export const previewOptions: PreviewOption[] = [
-  { id: 'predict', label: 'Predict' },
-  { id: 'observe', label: 'Observe' },
-  { id: 'choose', label: 'Choose a repair' },
-  { id: 'explain', label: 'Explain' },
-  { id: 'feedback', label: 'Feedback (answer preview)' },
-  { id: 'try', label: 'Try the fix' },
-]
-
-// Feedback mockup content — the only place answers appear.
+// Feedback content — the only place answers appear.
 export const feedback = {
   intendedTarget: 'The Name input',
   intendedReason:

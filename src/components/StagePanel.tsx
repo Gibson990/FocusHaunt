@@ -1,49 +1,62 @@
-import { useId, useState } from 'react'
+// One current-stage panel for the M1 real lesson. Renders the panel for the
+// active phase, bound to real lesson state. Radios and the reflection field
+// hold state in the lesson hook (not local form state), so choices persist
+// across Back navigation.
+
+import { useId } from 'react'
 import type { ReactNode } from 'react'
-import { predictOptions, proposedChanges, feedback } from '../lesson'
-import type { FocusTargetId, PreviewStage } from '../lesson'
+import { predictOptions, proposedChanges, feedback, phaseMeta } from '../lesson'
+import type { FocusTargetId, LessonPhase, RepairId } from '../lesson'
 
 interface StagePanelProps {
-  stage: PreviewStage
+  phase: LessonPhase
+  predicted: FocusTargetId | ''
+  chosenRepair: RepairId | ''
+  reflection: string
+  observedFocus: string | null
+  fixtureOpen: boolean
+  appliedRepair: RepairId | null
+  onPredicted: (value: FocusTargetId | '') => void
+  onChosenRepair: (value: RepairId | '') => void
+  onReflection: (value: string) => void
+  onCloseFixture: () => void
+  onResetFixture: () => void
 }
 
-// One current-stage panel, rendered from the selected preview state. No lesson
-// logic: radios/textarea hold local form state only.
-export function StagePanel({ stage }: StagePanelProps) {
-  switch (stage) {
+export function StagePanel(props: StagePanelProps) {
+  switch (props.phase) {
     case 'predict':
-      return <PredictPanel />
+      return <PredictPanel {...props} />
     case 'observe':
-      return <ObservePanel />
+      return <ObservePanel {...props} />
     case 'choose':
-      return <ChoosePanel />
+      return <ChoosePanel {...props} />
     case 'explain':
-      return <ExplainPanel />
+      return <ExplainPanel {...props} />
     case 'feedback':
       return <FeedbackPanel />
     case 'try':
-      return <TryPanel />
-    default:
-      return null
+      return <TryPanel {...props} />
   }
 }
 
 interface PanelProps {
-  step?: string
+  phase: LessonPhase
   title: string
   note?: string
   answer?: boolean
   children: ReactNode
 }
 
-function Panel({ step, title, note, answer, children }: PanelProps) {
+function Panel({ phase, title, note, answer, children }: PanelProps) {
+  const meta = phaseMeta.find((m) => m.id === phase)
   const className = answer
     ? 'panel__section panel__section--answer'
     : 'panel__section'
   return (
     <section className={className}>
       <header className="panel__head">
-        {step ? <p className="panel__step">{step}</p> : null}
+        <p className="panel__step">{meta?.label ?? phase}</p>
         <h2 className="panel__title">{title}</h2>
       </header>
       {note ? <p className="panel__note">{note}</p> : null}
@@ -52,15 +65,13 @@ function Panel({ step, title, note, answer, children }: PanelProps) {
   )
 }
 
-function PredictPanel() {
+function PredictPanel({ predicted, onPredicted }: StagePanelProps) {
   const name = useId()
-  const [target, setTarget] = useState<FocusTargetId | ''>('')
-
   return (
     <Panel
-      step="Predict"
+      phase="predict"
       title="Where should focus go when the dialog opens?"
-      note="Prediction only — no expected target, answer, or explanation is shown here. Your choice lives in this form only."
+      note="Predict before observing. No expected target or answer is shown here."
     >
       <fieldset className="predict">
         <legend className="predict__legend">Predicted target</legend>
@@ -71,8 +82,8 @@ function PredictPanel() {
                 type="radio"
                 name={name}
                 value={option.id}
-                checked={target === option.id}
-                onChange={() => setTarget(option.id)}
+                checked={predicted === option.id}
+                onChange={() => onPredicted(option.id)}
               />
               <span className="predict__label">{option.label}</span>
               <span className="predict__hint">{option.hint}</span>
@@ -84,37 +95,47 @@ function PredictPanel() {
   )
 }
 
-function ObservePanel() {
+function ObservePanel({ observedFocus, fixtureOpen, onCloseFixture }: StagePanelProps) {
   return (
     <Panel
-      step="Observe"
-      title="Observed focus"
-      note="Observed focus is read from the real DOM in the lesson. This is a placeholder — it is NOT faked with a highlight or a mode label. The expected target is shown only in the Feedback preview."
+      phase="observe"
+      title="Observe the real focus"
+      note="Open the broken fixture with the opener button above. The observed focus is the real document.activeElement — not a fake highlight or mode label."
     >
       <div className="focus">
         <div className="focus__cell focus__cell--observed">
           <h3 className="focus__label">Observed focus (real activeElement)</h3>
-          <p className="focus__value focus__value--placeholder">— awaiting real observation</p>
+          {observedFocus ? (
+            <p className="focus__value">{observedFocus}</p>
+          ) : (
+            <p className="focus__value focus__value--placeholder">
+              — open the fixture to observe focus
+            </p>
+          )}
           <p className="focus__sub">
-            In the real lesson this reads document.activeElement after the broken
-            fixture opens; the defect leaves focus behind rather than moving it
-            into the dialog.
+            Tab and Shift+Tab are not contained in the broken fixture; press Escape
+            or the close button to close.
           </p>
         </div>
       </div>
+      {fixtureOpen && (
+        <div className="try__actions">
+          <button type="button" className="btn" onClick={onCloseFixture}>
+            Close fixture
+          </button>
+        </div>
+      )}
     </Panel>
   )
 }
 
-function ChoosePanel() {
+function ChoosePanel({ chosenRepair, onChosenRepair }: StagePanelProps) {
   const name = useId()
-  const [choice, setChoice] = useState<'changeOne' | 'changeTwo' | ''>('')
-
   return (
     <Panel
-      step="Choose a repair"
-      title="Pick a proposed change"
-      note="Neutral descriptions only — which change is correct is shown only in the Feedback preview. Selection here is a placeholder."
+      phase="choose"
+      title="Pick a bundled repair"
+      note="Neutral descriptions only — which repair is correct is shown only in the Feedback stage."
     >
       <fieldset className="repair">
         <legend className="repair__legend">Proposed changes</legend>
@@ -123,7 +144,7 @@ function ChoosePanel() {
             <label
               key={option.id}
               className={
-                choice === option.id
+                chosenRepair === option.id
                   ? 'repair__option is-selected'
                   : 'repair__option'
               }
@@ -132,8 +153,8 @@ function ChoosePanel() {
                 type="radio"
                 name={name}
                 value={option.id}
-                checked={choice === option.id}
-                onChange={() => setChoice(option.id)}
+                checked={chosenRepair === option.id}
+                onChange={() => onChosenRepair(option.id)}
               />
               <span className="repair__name">{option.name}</span>
               <span className="repair__summary">{option.change}</span>
@@ -145,18 +166,20 @@ function ChoosePanel() {
   )
 }
 
-function ExplainPanel() {
+function ExplainPanel({ reflection, onReflection }: StagePanelProps) {
   return (
     <Panel
-      step="Explain"
+      phase="explain"
       title="Reflection (unscored)"
-      note="Self-explanation only. This text is NOT graded or semantically assessed. Feedback comes after this step."
+      note="Self-explanation only — NOT graded or assessed. Feedback comes after this step."
     >
       <label className="reflection">
         <span className="reflection__label">Explain your choice before feedback</span>
         <textarea
           className="reflection__field"
           rows={4}
+          value={reflection}
+          onChange={(e) => onReflection(e.target.value)}
           placeholder="Why did focus fail on open, and why does your proposed change fix it?"
         />
       </label>
@@ -167,10 +190,10 @@ function ExplainPanel() {
 function FeedbackPanel() {
   return (
     <Panel
-      step="Feedback"
-      title="Feedback (answer preview)"
+      phase="feedback"
+      title="Feedback"
       answer
-      note="This mockup contains the answers. It is separate from the prediction view."
+      note="The answers. Separate from the prediction view."
     >
       <div className="feedback">
         <div className="feedback__block">
@@ -202,27 +225,24 @@ function FeedbackPanel() {
   )
 }
 
-function TryPanel() {
+function TryPanel({ appliedRepair, onResetFixture }: StagePanelProps) {
   return (
     <Panel
-      step="Try the fix"
-      title="Repaired behavior (static preview)"
-      note="Static preview only — not an activeElement observation and not a working repaired dialog. The bundled repair is applied to the fixture in the real lesson, not by editing external code."
+      phase="try"
+      title="Experience the repaired behavior"
+      note="The correct bundled repair (Repair A) is applied to the fixture above. Open it to experience the real repaired behavior — not an edited copy of your code."
     >
       <p className="try__copy">
-        After feedback, the corrected dialog would move focus to the Name input on
-        open, contain Tab/Shift+Tab, close on Escape or the close button, and
-        return focus to the opener.
+        After feedback, the corrected dialog moves focus to the Name input on open,
+        contains Tab/Shift+Tab, closes on Escape or the close button, and returns
+        focus to the opener.
       </p>
       <div className="try__actions">
-        <button type="button" className="btn btn--ghost">
-          Apply bundled repair
-        </button>
-        <button type="button" className="btn">
-          Reset
+        <button type="button" className="btn" onClick={onResetFixture}>
+          Reset fixture
         </button>
       </div>
-      <p className="try__sub">Buttons are placeholders in this mockup.</p>
+      <p className="try__sub">Applied repair: {appliedRepair ?? 'none'}.</p>
     </Panel>
   )
 }

@@ -3,15 +3,17 @@
 A small, single-lesson reasoning-and-repair learning experiment about keyboard
 focus.
 
-> **Milestone M0.1 — static mockup.** Visual direction only. Lesson interactions
-> are not implemented. The state-preview selector inspects static stages; it does
-> not open, close, or manage real focus. See `.kiro/` for requirements, design,
-> tasks, and the preserved one-lesson spec.
+> **Milestone M1 — real lesson.** The lesson is implemented: a required phase
+> flow (Predict → Observe → Choose → Explain → Feedback → Try), a real
+> non-native dialog fixture that leaves focus behind on open, real Tab/Shift+Tab
+> containment, Escape/close, opener restoration, and a real observed-focus
+> readout (document.activeElement). Answers appear only in the Feedback stage.
+> See `.kiro/` for requirements, design, tasks, and the preserved one-lesson spec.
 
 ## Stack
-Vite + React + TypeScript. Dependencies are installed by the coordinator via the
-documented review path (`npm ci --ignore-scripts --no-audit --no-fund`). No
-packages were installed, committed, pushed, or deployed during this handoff.
+Vite + React + TypeScript. Dependencies are present via the documented review
+path (`npm ci --ignore-scripts --no-audit --no-fund`). No packages were
+installed, committed, pushed, or deployed during this work.
 
 ## Scripts
 ```sh
@@ -21,22 +23,23 @@ npm run typecheck  # tsc --noEmit
 npm run preview    # vite preview
 ```
 
-## M0.1 verification (actually run this session)
+## M1 verification (run this work)
 - `npm run typecheck` → exit 0 (no type errors).
-- `npm run build` → exit 0; `dist/` produced: `index.html`,
-  `assets/index-*.js` (~155.6 kB), `assets/index-*.css` (~9.4 kB).
-- Browser interaction acceptance tests: NOT run (future). Do not infer passing
-  behavior from static previews.
+- `npm run build` → exit 0; `dist/` produced: `index.html` (~0.60 kB),
+  `assets/index-*.js` (~159.6 kB), `assets/index-*.css` (~9.9 kB).
+- Browser interaction acceptance tests: specified (see `.kiro/tasks.md`), NOT
+  run — the manifest has no test runner/DOM library and none was added. Do not
+  infer passing behavior from the build.
 
-## Static limitations (known)
-- No lesson behavior: no real opening, focus movement, Tab/Shift+Tab containment,
-  Escape/close, opener restoration, reset, or repair application.
-- Static previews are not `document.activeElement` observations and not working
-  repaired dialogs.
-- The state-preview selector swaps static stages only; it is labelled exactly
-  "Mockup state preview, not lesson progression".
-- Prediction view exposes no answer; answers appear only in the separate
-  Feedback preview.
+## Real behavior (M1)
+- Phase order is required and enforced; Back revisits, Continue is gated.
+- Observe reads the real `document.activeElement`; no fake highlight or mode label.
+- The broken fixture leaves focus behind on open; Tab is not contained.
+- The repaired fixture (Repair A applied in Try) moves focus to the Name input on
+  open, contains Tab/Shift+Tab at both boundaries, closes on Escape/close, and
+  restores focus to the opener.
+- Reflection is unscored and precedes feedback. The bundled repair is applied to
+  the fixture, not described as editing external/project code.
 
 ## Scope
 One lesson only. Excluded: second case, transfer task, recorder timeline,

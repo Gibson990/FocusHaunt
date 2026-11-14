@@ -1,8 +1,10 @@
-# FocusHaunt — One-Lesson Spec (preserved for the next milestone)
+# FocusHaunt — One-Lesson Spec (implemented in M1)
 
-This is the single-lesson reasoning-and-repair specification. It is **not**
-implemented in the mockup. It is preserved here verbatim-in-intent so the next
-milestone can build against it without re-deriving it.
+This is the single-lesson reasoning-and-repair specification. It is preserved
+here verbatim-in-intent. M1 implements it: a required phase flow, real focus
+observation, a broken/repaired non-native fixture, two bundled repairs, unscored
+reflection before feedback, the feedback, and the repaired experience. See
+`design.md` and `tasks.md` for architecture, verification, and acceptance criteria.
 
 ## What FocusHaunt is (and is not)
 - A small, single guided lesson about keyboard focus. NOT a general recorder

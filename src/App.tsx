@@ -1,16 +1,17 @@
-import { useState } from 'react'
 import { MockupBanner } from './components/MockupBanner'
 import { ProgressionIndicator } from './components/ProgressionIndicator'
-import { StateSelector } from './components/StateSelector'
-import { DialogPlayground } from './components/DialogPlayground'
+import { DialogFixture } from './components/DialogFixture'
 import { StagePanel } from './components/StagePanel'
 import { Footer } from './components/Footer'
-import type { PreviewStage } from './lesson'
+import { useLesson } from './hooks/useLesson'
+import { phaseMeta } from './lesson'
 
 export function App() {
-  // Mockup state-preview only. This is NOT a lesson state machine: it only
-  // swaps which static stage is inspected and does not open/close/manage focus.
-  const [stage, setStage] = useState<PreviewStage>('predict')
+  const lesson = useLesson()
+  const { state } = lesson
+  const canOpen = state.phase === 'observe' || state.phase === 'try'
+  const meta = phaseMeta.find((m) => m.id === state.phase)
+  const isLast = state.phase === 'try'
 
   return (
     <div className="app">
@@ -22,13 +23,61 @@ export function App() {
         <MockupBanner />
       </header>
 
-      <ProgressionIndicator />
-      <StateSelector stage={stage} onChange={setStage} />
+      <ProgressionIndicator current={state.phase} />
 
       <main className="workspace">
-        <DialogPlayground stage={stage} />
-        <StagePanel stage={stage} />
+        <DialogFixture
+          phase={state.phase}
+          open={state.fixtureOpen}
+          appliedRepair={state.appliedRepair}
+          canOpen={canOpen}
+          onOpen={lesson.openFixture}
+          onClose={lesson.closeFixture}
+          onObserved={lesson.setObservedFocus}
+        />
+        <StagePanel
+          phase={state.phase}
+          predicted={state.predicted}
+          chosenRepair={state.chosenRepair}
+          reflection={state.reflection}
+          observedFocus={state.observedFocus}
+          fixtureOpen={state.fixtureOpen}
+          appliedRepair={state.appliedRepair}
+          onPredicted={lesson.setPredicted}
+          onChosenRepair={lesson.setChosenRepair}
+          onReflection={lesson.setReflection}
+          onCloseFixture={lesson.closeFixture}
+          onResetFixture={lesson.resetFixture}
+        />
       </main>
+
+      <div className="phase-controls" aria-label="Lesson phase controls">
+        <span className="phase-controls__current">{meta?.label ?? state.phase}</span>
+        <div className="phase-controls__buttons">
+          <button
+            type="button"
+            className="btn"
+            onClick={lesson.back}
+            disabled={state.phase === 'predict'}
+          >
+            Back
+          </button>
+          {isLast ? (
+            <button type="button" className="btn btn--ghost" onClick={lesson.restart}>
+              Start over
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn btn--ghost"
+              onClick={lesson.next}
+              disabled={!lesson.canAdvance}
+            >
+              Continue
+            </button>
+          )}
+        </div>
+      </div>
 
       <Footer />
     </div>

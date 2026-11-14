@@ -161,6 +161,15 @@ p {
   font-style: italic;
 }
 
+.progression__item.is-current .progression__index {
+  color: var(--ghost-ink);
+}
+
+.progression__item.is-current .progression__label {
+  color: var(--ink);
+  font-weight: 700;
+}
+
 .progression__hint {
   margin-top: 6px;
   font-size: 0.8rem;
@@ -201,6 +210,31 @@ p {
   flex-basis: 100%;
   font-size: 0.78rem;
   color: var(--ink-mid);
+}
+
+/* ---------- Phase controls ---------- */
+.phase-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  padding: 12px 16px;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.phase-controls__current {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+.phase-controls__buttons {
+  display: flex;
+  gap: 8px;
 }
 
 /* ---------- Workspace grid ---------- */
