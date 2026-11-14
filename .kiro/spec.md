@@ -1,8 +1,8 @@
 # FocusHaunt — One-Lesson Spec (preserved for the next milestone)
 
 This is the single-lesson reasoning-and-repair specification. It is **not**
-implemented in the M0 static mockup. It is preserved here verbatim-in-intent so
-the next milestone can build against it without re-deriving it.
+implemented in the mockup. It is preserved here verbatim-in-intent so the next
+milestone can build against it without re-deriving it.
 
 ## What FocusHaunt is (and is not)
 - A small, single guided lesson about keyboard focus. NOT a general recorder
@@ -44,15 +44,15 @@ the next milestone can build against it without re-deriving it.
 
 ## Broken fixture rules
 - Contained and clearly labelled.
-- Reliable Escape/close path, keyboard-reachable reset, usable teaching shell in
-  all states.
+- Reliable Escape/close path, keyboard-reachable reset, usable teaching shell
+  in all states.
 - Do NOT use the native `<dialog>` API that silently fixes initial focus while
   claiming to show the opposite. Use a non-native container with manual focus
   management so the defect is real.
 - Reset clears stale inertness and listeners; repeated open/close/reset must
   remain safe.
 
-## Future acceptance tests (specified now, NOT executed in M0)
+## Future acceptance tests (specified now, NOT executed in the mockup)
 - Use REAL browser Tab/Shift+Tab/Escape/close/reset; assert real focus/DOM
   behavior.
 - Do NOT use direct `focus()` helpers masquerading as key tests. Do NOT use
@@ -65,3 +65,28 @@ Second case, transfer task, recorder timeline, editor, scanner, extension,
 arbitrary URLs/uploads, runtime AI, accounts/backend, external-site access, user
 tracking, export generation, automatic grading. No claim of validated learning
 transfer, uniqueness, compliance, production readiness, or prize likelihood.
+
+---
+
+## M0.1 mockup addendum (does not alter the spec above)
+- The M0.1 mockup is static only; it does not implement this spec's real
+  behavior.
+- The prediction view exposes no expected target, correctness, explanation, or
+  answer (visible or accessible text). Answers appear only in a separate,
+  explicit Feedback preview.
+- The Predict preview shows neutral unopened-preview wording; the broken
+  outcome and failure details appear only in Observe and later previews.
+- The two repairs are presented with neutral names ("Repair A"/"Repair B") and
+  a proposed-change description beneath, not labeled correct/distractor in
+  Choose. Feedback names the correct repair and repeats its proposed change;
+  the distractor is the ARIA-only change, which fails the opening-focus
+  requirement (ARIA does not move focus by itself).
+- The intended initial target is the Name input because it lets the user edit
+  immediately — a design choice for this short edit-name dialog, not a DOM
+  Tab-order rule. The close button is reachable first in tab order. The input is
+  not claimed to be the "first focusable control", and no universal rule is
+  stated.
+- Layout is a compact progression indicator + playground + one current-stage
+  panel. A static selector labelled exactly "Mockup state preview, not lesson
+  progression" inspects static states without controlling dialog behavior.
+- Reflection stays unscored.

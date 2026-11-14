@@ -2,53 +2,59 @@
 
 ## Product
 FocusHaunt is a small, single-lesson reasoning-and-repair learning experiment
-about keyboard focus. It is **not** a general recorder, scanner, editor, or
-timeline. One original dialog intentionally opens while leaving real focus
-behind; the learner reasons about the defect and picks a bundled repair.
+about keyboard focus. Not a general recorder, scanner, editor, or timeline.
 
-## Core lesson requirements (full app — NOT all implemented in M0)
-- Learner predicts the correct focus target **before** observing the defect.
+## Core lesson requirements (full app — not implemented in the mockup)
+- Learner predicts the correct focus target BEFORE observing the defect.
 - Learner opens and uses the intentionally broken dialog fixture (focus left
   behind on open).
-- Observed focus = real `document.activeElement`, kept **separate** from the
-  authored expected focus; never faked via a highlight or a mode label.
+- Observed focus = real `document.activeElement`, separate from authored
+  expected focus; never faked via highlight or mode label.
 - Learner chooses between two bundled repairs:
-  - Correct: justified initial focus target + repaired Tab/Shift+Tab containment
-    (both boundaries) + Escape/close + restoration of focus to the opener.
-  - Distractor: plausible but fails the opening-focus requirement, and must NOT
-    teach that ARIA attributes alone move focus.
-- Learner writes an **unscored** explanation **before** feedback (self-explanation,
-  not AI semantic grading; arbitrary text is never "assessed").
+  - Correct: justified initial focus target + Tab/Shift+Tab containment (both
+    boundaries) + Escape/close + opener restoration.
+  - Distractor: plausible, fails the opening-focus requirement, must NOT teach
+    that ARIA alone moves focus.
+- Learner writes an UNSCORED explanation BEFORE feedback.
 - Learner then experiences the real repaired behavior via the bundled repair,
-  applied honestly to the fixture (not described as automatic editing of
-  external/project code).
-- Broken fixture is contained and clearly labelled; reliable Escape/close path;
-  keyboard-reachable reset; usable teaching shell in all states.
-- No native `<dialog>` API that silently fixes initial focus while claiming to
-  demonstrate the opposite. Use a non-native container with manual focus
-  management so the defect is real.
-- Reset clears stale inertness/listeners; repeated open/close/reset stays safe.
-- Normal page keyboard access preserved across all states.
+  applied to the fixture (not automatic editing of external code).
+- Broken fixture contained and labelled; reliable Escape/close; keyboard-
+  reachable reset; usable shell in all states.
+- No native `<dialog>` API that silently fixes initial focus while claiming the
+  opposite. Reset clears stale inertness/listeners; repeated open/close/reset
+  stays safe. Normal page keyboard access preserved.
 
 ## Non-functional
 - Warm quiet background, dark ink, restrained ghost-green accent; strong
-  typography and spacing matter more than decoration.
-- No gradient dashboard, analytics chrome, excessive cards, or distracting
+  typography/spacing; no gradient/analytics/excessive cards/distracting
   animation.
-- Intentional local/system font stack; no external font request; no invented
-  installed font.
-- Visible focus styles, readable contrast, narrow-screen layout, and
-  `prefers-reduced-motion` support.
+- Local/system font stack; no external fonts; no invented installed fonts.
+- Visible focus styles, readable contrast (meaningful text >= 4.5:1; measured
+  pairs in `design.md`), narrow-screen layout, reduced-motion support.
 
-## This milestone (M0)
-Static visual mockup only. No learning loop. See `design.md` for the
-mocked-vs-functional record.
+## M0.1 mockup (this milestone)
+- Static visual mockup only; no lesson behavior (no real opening/focus/
+  containment/Escape/restore/reset/repair).
+- Compact progression indicator + playground + ONE current-stage panel; initial
+  state is prediction beside/above an unopened preview-only fixture. The Predict
+  preview uses neutral unopened-preview wording; the broken outcome and failure
+  details appear only in Observe and later previews.
+- A static selector labelled exactly "Mockup state preview, not lesson
+  progression" inspects static states without controlling dialog behavior.
+- Prediction view exposes NO expected target, correctness, explanation, or
+  answer (visible or accessible). Repairs are shown with neutral names
+  ("Repair A"/"Repair B") and a proposed-change description beneath; correctness
+  is shown only in the separate Feedback preview, which names the correct repair.
+- Intended initial target is the Name input (lets the user edit immediately) — a
+  design choice, not a DOM Tab-order rule; the close button precedes it. The
+  input is not called "first focusable control"; no universal rule is stated.
+- Reflection stays unscored. Static previews are not activeElement observations
+  or working repaired dialogs.
 
-## Future tests (specified now, NOT executed in M0)
-Real-browser Tab/Shift+Tab/Escape/close/reset asserting real focus/DOM behavior
-(no `focus()` helpers masquerading as key tests, no mode-based PASS). Cover
-prediction/feedback ordering, both repaired wrap boundaries, opener
-restoration, and shell access.
+## Future tests (specified, NOT executed in the mockup)
+Real-browser Tab/Shift+Tab/Escape/close/reset asserting real focus/DOM (no
+`focus()` helpers, no mode-based PASS); cover prediction/feedback ordering, both
+wrap boundaries, opener restoration, shell access.
 
 ## Out of scope (excluded)
 Second case, transfer task, recorder timeline, editor, scanner, extension,

@@ -2,8 +2,8 @@ export function MockupBanner() {
   return (
     <p className="mockup-banner">
       <strong>Mockup.</strong> Visual direction only — lesson interactions are not
-      implemented. Controls are placeholders and do not drive the broken or
-      repaired fixture yet.
+      implemented. Controls and the state-preview selector are placeholders; they
+      do not open, close, or manage real focus.
     </p>
   )
 }

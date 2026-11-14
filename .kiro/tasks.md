@@ -1,40 +1,44 @@
 # FocusHaunt — Tasks
 
-## M0 — Static mockup (this milestone)
-- [x] Scaffold Vite + React + TS project files (no package install).
-- [x] Concise `.kiro` records: requirements, design, tasks, one-lesson spec.
-- [x] Single polished visual direction: warm bg, ink, ghost-green; typography and
-  spacing; visible focus styles; responsive; reduced-motion; system fonts; no
-  external requests.
-- [x] Layout: header + mockup banner, step rail, playground center, lesson panel side.
-- [x] Placeholders: predicted-target control, expected/observed focus display,
-  two repair options, reflection field, reset/close affordances.
-- [x] Dialog fixture static render (non-native), contained and labelled; mockup
-  markings throughout.
+## M0.1 — Static mockup revision (this milestone)
+- [x] Replace five expanded panels with compact progression indicator +
+  playground + one current-stage panel; initial state = prediction beside an
+  unopened preview-only fixture.
+- [x] Add state-preview `<select>` labelled exactly "Mockup state preview, not
+  lesson progression"; inspects static states, controls no dialog behavior.
+- [x] Prediction view exposes no expected target/correctness/explanation/answer
+  (visible or accessible). Repair options renamed to neutral proposed-change
+  descriptions. Answers moved to a separate explicit Feedback preview.
+- [x] State the Name input is the intended initial target (edit immediately);
+  distinguish from DOM Tab order (close button precedes it); no "first
+  focusable control" claim; no universal rule.
+- [x] Darken meaningful helper/status/placeholder text and step numerals
+  (`--ink-mid`); record measured contrast pairs (design.md); keep visible focus.
+- [x] Update footer/README/.kiro honestly; preserve one dialog and palette; add
+  no interaction state machine or real behavior; keep reflection unscored.
+- [x] Remove unused `StepRail.tsx` and `LessonPanel.tsx`.
+
+## M0.1 verification (actually run this session)
+- `npm run typecheck` → exit 0.
+- `npm run build` → exit 0; `dist/index.html`, `dist/assets/index-*.js`
+  (~155.6 kB), `dist/assets/index-*.css` (~9.4 kB).
+- Browser acceptance tests: NOT run (future).
+
+## M0 — Static mockup (prior milestone)
+- [x] Scaffold Vite + React + TS files (no package install).
+- [x] Concise `.kiro` records; one polished visual direction; placeholders for
+  predicted target, expected/observed focus, two repairs, reflection, reset/
+  close; static broken dialog fixture (non-native, contained, labelled).
 - [x] Report blocked checks.
 
-## Blocked (need dependency install by coordinator)
-- [ ] `npm install` (react, react-dom, typescript, vite, @vitejs/plugin-react,
-  @types/react, @types/react-dom).
-- [ ] `npm run typecheck` and `npm run build` verification.
-- [ ] Browser test runner + acceptance tests (separately approved; not in the M0
-  manifest).
-
-## Next milestone — DO NOT implement in M0
-- [ ] Lesson phase machine: Predict → Observe → Choose → Explain → Try, with real
-  ordering enforced.
-- [ ] Real observed focus via `activeElement`; separate from authored expected;
-  no fake highlight/mode label.
-- [ ] Broken fixture: non-native container, real focus-left-behind, Tab/Shift+Tab
-  containment at both boundaries, Escape/close, opener restore, safe reset.
-- [ ] Bundled repairs: correct (initial focus + both wrap boundaries + escape +
-  restore) vs ARIA-only distractor (fails opening focus; no "ARIA moves focus"
-  myth); feedback explains the difference.
-- [ ] Unscored reflection before feedback; honest bundled-repair application label.
-- [ ] Browser acceptance tests: real Tab/Shift+Tab/Escape/close/reset; assert real
-  focus/DOM (no `focus()` helpers, no mode-based PASS); cover prediction/feedback
-  ordering, both wrap boundaries, opener restoration, shell access.
+## Blocked / future (not done in M0.1)
+- [ ] Coordinator review install path: `npm ci --ignore-scripts --no-audit
+  --no-fund` (documented; not rerun needlessly).
+- [ ] Lesson phase machine + real opening/focus/containment/Escape/restore/
+  reset/repair behavior.
+- [ ] Browser acceptance tests: real Tab/Shift+Tab/Escape/close/reset asserting
+  real focus/DOM (no `focus()` helpers, no mode-based PASS); cover prediction/
+  feedback ordering, both wrap boundaries, opener restoration, shell access.
 
 ## Status
-M0 files created. Build, typecheck, and tests are blocked pending dependency
-install by the coordinator.
+M0.1 files written; typecheck and build pass. Browser tests remain future/unrun.
