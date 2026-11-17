@@ -1,10 +1,10 @@
-# FocusHaunt — One-Lesson Spec (implemented in M1)
+# FocusHaunt — One-Lesson Spec (M1 accepted 2026-11-17)
 
 This is the single-lesson reasoning-and-repair specification. It is preserved
-here verbatim-in-intent. M1 implements it: a required phase flow, real focus
+here verbatim-in-intent. The current WIP repair candidate implements a required phase flow, real focus
 observation, a broken/repaired non-native fixture, two bundled repairs, unscored
 reflection before feedback, the feedback, and the repaired experience. See
-`design.md` and `tasks.md` for architecture, verification, and acceptance criteria.
+`design.md` and `tasks.md` for architecture, verification, and remaining unverified criteria.
 
 ## What FocusHaunt is (and is not)
 - A small, single guided lesson about keyboard focus. NOT a general recorder
@@ -54,7 +54,11 @@ reflection before feedback, the feedback, and the repaired experience. See
 - Reset clears stale inertness and listeners; repeated open/close/reset must
   remain safe.
 
-## Future acceptance tests (specified now, NOT executed in the mockup)
+## Acceptance verification
+- Focused localhost smoke checks exercised the six bounded repairs, Escape,
+  Close, Cancel, opener restoration, and text entry.
+- Native Tab/Shift+Tab wrap at both repaired boundaries was verified in a real
+  browser on 2026-11-17.
 - Use REAL browser Tab/Shift+Tab/Escape/close/reset; assert real focus/DOM
   behavior.
 - Do NOT use direct `focus()` helpers masquerading as key tests. Do NOT use

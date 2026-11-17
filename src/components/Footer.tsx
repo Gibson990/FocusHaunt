@@ -3,10 +3,10 @@ export function Footer() {
     <footer className="footer">
       <p>FocusHaunt — one-lesson reasoning-and-repair experiment.</p>
       <p className="footer__muted">
-        Milestone M1: real lesson. Available automated checks are tsc --noEmit and
-        vite build; browser acceptance tests are specified, not run (no runner in
-        the manifest). Observed focus is the real document.activeElement; answers
-        appear only in Feedback.
+        Milestone M1 accepted after independent review. Typecheck, build, four state
+        tests, and focused localhost smoke checks passed; real-browser keyboard checks
+        passed 2026-11-17. Observed focus is the real document.activeElement;
+        answers appear only in Feedback.
       </p>
     </footer>
   )

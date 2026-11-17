@@ -4,7 +4,7 @@
 // across Back navigation.
 
 import { useId } from 'react'
-import type { ReactNode } from 'react'
+import type { ReactNode, RefObject } from 'react'
 import { predictOptions, proposedChanges, feedback, phaseMeta } from '../lesson'
 import type { FocusTargetId, LessonPhase, RepairId } from '../lesson'
 
@@ -16,11 +16,15 @@ interface StagePanelProps {
   observedFocus: string | null
   fixtureOpen: boolean
   appliedRepair: RepairId | null
+  advanceAttempted: boolean
+  predictionFocusRef: RefObject<HTMLInputElement>
   onPredicted: (value: FocusTargetId | '') => void
   onChosenRepair: (value: RepairId | '') => void
   onReflection: (value: string) => void
   onCloseFixture: () => void
   onResetFixture: () => void
+  onChangeChoice: () => void
+  onApplyCorrectRepair: () => void
 }
 
 export function StagePanel(props: StagePanelProps) {
@@ -34,7 +38,7 @@ export function StagePanel(props: StagePanelProps) {
     case 'explain':
       return <ExplainPanel {...props} />
     case 'feedback':
-      return <FeedbackPanel />
+      return <FeedbackPanel {...props} />
     case 'try':
       return <TryPanel {...props} />
   }
@@ -65,18 +69,20 @@ function Panel({ phase, title, note, answer, children }: PanelProps) {
   )
 }
 
-function PredictPanel({ predicted, onPredicted }: StagePanelProps) {
+function PredictPanel({ predicted, onPredicted, advanceAttempted, predictionFocusRef }: StagePanelProps) {
   const name = useId()
+  const errorId = useId()
+  const showError = advanceAttempted && predicted === ''
   return (
     <Panel
       phase="predict"
       title="Where should focus go when the dialog opens?"
       note="Predict before observing. No expected target or answer is shown here."
     >
-      <fieldset className="predict">
+      <fieldset className="predict" aria-describedby={showError ? errorId : undefined}>
         <legend className="predict__legend">Predicted target</legend>
         <div className="predict__options">
-          {predictOptions.map((option) => (
+          {predictOptions.map((option, index) => (
             <label key={option.id} className="predict__option">
               <input
                 type="radio"
@@ -84,6 +90,7 @@ function PredictPanel({ predicted, onPredicted }: StagePanelProps) {
                 value={option.id}
                 checked={predicted === option.id}
                 onChange={() => onPredicted(option.id)}
+                ref={index === 0 ? predictionFocusRef : undefined}
               />
               <span className="predict__label">{option.label}</span>
               <span className="predict__hint">{option.hint}</span>
@@ -91,6 +98,7 @@ function PredictPanel({ predicted, onPredicted }: StagePanelProps) {
           ))}
         </div>
       </fieldset>
+      {showError ? <p id={errorId} className="inline-guidance" role="alert">Choose a prediction before continuing.</p> : null}
     </Panel>
   )
 }
@@ -129,15 +137,17 @@ function ObservePanel({ observedFocus, fixtureOpen, onCloseFixture }: StagePanel
   )
 }
 
-function ChoosePanel({ chosenRepair, onChosenRepair }: StagePanelProps) {
+function ChoosePanel({ chosenRepair, onChosenRepair, advanceAttempted }: StagePanelProps) {
   const name = useId()
+  const errorId = useId()
+  const showError = advanceAttempted && chosenRepair === ''
   return (
     <Panel
       phase="choose"
       title="Pick a bundled repair"
       note="Neutral descriptions only — which repair is correct is shown only in the Feedback stage."
     >
-      <fieldset className="repair">
+      <fieldset className="repair" aria-describedby={showError ? errorId : undefined}>
         <legend className="repair__legend">Proposed changes</legend>
         <div className="repair__options">
           {proposedChanges.map((option) => (
@@ -162,11 +172,14 @@ function ChoosePanel({ chosenRepair, onChosenRepair }: StagePanelProps) {
           ))}
         </div>
       </fieldset>
+      {showError ? <p id={errorId} className="inline-guidance" role="alert">Choose a repair before continuing.</p> : null}
     </Panel>
   )
 }
 
-function ExplainPanel({ reflection, onReflection }: StagePanelProps) {
+function ExplainPanel({ reflection, onReflection, advanceAttempted }: StagePanelProps) {
+  const errorId = useId()
+  const showError = advanceAttempted && reflection.trim() === ''
   return (
     <Panel
       phase="explain"
@@ -181,13 +194,18 @@ function ExplainPanel({ reflection, onReflection }: StagePanelProps) {
           value={reflection}
           onChange={(e) => onReflection(e.target.value)}
           placeholder="Why did focus fail on open, and why does your proposed change fix it?"
+          aria-invalid={showError || undefined}
+          aria-describedby={showError ? errorId : undefined}
         />
       </label>
+      {showError ? <p id={errorId} className="inline-guidance" role="alert">Add a brief self-explanation before continuing. It is not graded.</p> : null}
     </Panel>
   )
 }
 
-function FeedbackPanel() {
+function FeedbackPanel({ chosenRepair, onChangeChoice, onApplyCorrectRepair }: StagePanelProps) {
+  const selected = proposedChanges.find((change) => change.id === chosenRepair)
+  const selectedExplanation = selected?.correct ? feedback.whyCorrect : feedback.whyDistractorFails
   return (
     <Panel
       phase="feedback"
@@ -196,6 +214,12 @@ function FeedbackPanel() {
       note="The answers. Separate from the prediction view."
     >
       <div className="feedback">
+        <div className="feedback__block">
+          <h3 className="feedback__label">Your choice</h3>
+          <p className="feedback__value">{selected?.name ?? 'No repair selected'}</p>
+          {selected ? <p className="feedback__sub">{selected.change}</p> : null}
+          {selectedExplanation ? <p className="feedback__sub">{selectedExplanation}</p> : null}
+        </div>
         <div className="feedback__block">
           <h3 className="feedback__label">Intended initial target</h3>
           <p className="feedback__value">{feedback.intendedTarget}</p>
@@ -220,6 +244,10 @@ function FeedbackPanel() {
           <p className="feedback__sub">{feedback.whyDistractorFails}</p>
         </div>
         <p className="feedback__note">{feedback.reflectionNote}</p>
+        <div className="try__actions">
+          <button type="button" className="btn" onClick={onChangeChoice}>Change my choice</button>
+          <button type="button" className="btn btn--ghost" onClick={onApplyCorrectRepair}>Apply the correct repair</button>
+        </div>
       </div>
     </Panel>
   )

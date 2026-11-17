@@ -3,11 +3,13 @@
 A small, single-lesson reasoning-and-repair learning experiment about keyboard
 focus.
 
-> **Milestone M1 — real lesson.** The lesson is implemented: a required phase
+> **Milestone M1 accepted 2026-11-17 after independent review.** The current WIP branch has a required phase
 > flow (Predict → Observe → Choose → Explain → Feedback → Try), a real
 > non-native dialog fixture that leaves focus behind on open, real Tab/Shift+Tab
 > containment, Escape/close, opener restoration, and a real observed-focus
-> readout (document.activeElement). Answers appear only in the Feedback stage.
+> readout (document.activeElement), accessible incomplete-step guidance,
+> selection-specific feedback, explicit repair application, and restart focus.
+> Answers appear only in the Feedback stage.
 > See `.kiro/` for requirements, design, tasks, and the preserved one-lesson spec.
 
 ## Stack
@@ -26,20 +28,22 @@ npm run preview    # vite preview
 ## M1 verification (run this work)
 - `npm run typecheck` → exit 0 (no type errors).
 - `npm run build` → exit 0; `dist/` produced: `index.html` (~0.60 kB),
-  `assets/index-*.js` (~159.6 kB), `assets/index-*.css` (~9.9 kB).
-- Browser interaction acceptance tests: specified (see `.kiro/tasks.md`), NOT
-  run — the manifest has no test runner/DOM library and none was added. Do not
-  infer passing behavior from the build.
+  `assets/index-*.js` (~162.0 kB), `assets/index-*.css` (~10.0 kB).
+- `node --test src/lessonState.test.mjs` → 4 tests passed using Node's installed
+  test runner; no package was added.
+- Focused localhost browser smoke checks covered the six bounded repairs. Real-browser
+  Tab/Shift+Tab wrap at both repaired boundaries was verified 2026-11-17.
 
 ## Real behavior (M1)
-- Phase order is required and enforced; Back revisits, Continue is gated.
+- Phase order is required and enforced; attempted incomplete steps show inline
+  guidance and whitespace-only reflection cannot advance.
 - Observe reads the real `document.activeElement`; no fake highlight or mode label.
 - The broken fixture leaves focus behind on open; Tab is not contained.
 - The repaired fixture (Repair A applied in Try) moves focus to the Name input on
   open, contains Tab/Shift+Tab at both boundaries, closes on Escape/close, and
   restores focus to the opener.
-- Reflection is unscored and precedes feedback. The bundled repair is applied to
-  the fixture, not described as editing external/project code.
+- Reflection is unscored and precedes selection-specific feedback. A labelled
+  action applies the correct bundled repair; it is not described as editing code.
 
 ## Scope
 One lesson only. Excluded: second case, transfer task, recorder timeline,

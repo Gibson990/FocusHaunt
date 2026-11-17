@@ -1,7 +1,7 @@
 # FocusHaunt — Design (M1 real lesson)
 
 ## Stack & layout
-Vite + React + TypeScript single page. The lesson is real: a `phase` value from
+Vite + React + TypeScript single page. In this WIP repair candidate, a `phase` value from
 `useLesson` drives a required phase flow and the live fixture. One polished
 visual direction.
 
@@ -62,15 +62,21 @@ on `--danger-soft` ~4.83:1. All meaningful pairs >= 4.5:1. Not a full audit.
   opener.
 - Observed focus is the real `document.activeElement`, reported via
   `describeElement`; never a fake highlight or mode label.
+- Background strategy: broken Observe intentionally leaves the teaching shell
+  available to demonstrate the defect. Repaired Try sets `aria-modal="true"`
+  and temporarily applies `inert` to every sibling along the dialog's ancestor
+  path, leaving only the dialog subtree interactive. Cleanup removes only the
+  inert attributes this hook added before focus returns to the opener.
 
 ## Mocked vs functional (M1)
-Functional: phase machine + real fixture focus management + observed-focus
-readout + repair application + unscored reflection + feedback.
-Not functional / future: browser acceptance test execution (no runner in the
-manifest); the Save button is a fixture control and does not persist (no
-backend).
+Functional in the WIP repair candidate: phase machine + incomplete-step guidance
+real fixture focus management + observed-focus readout + explicit repair
+application + unscored reflection + selection-specific feedback.
+Native Tab/Shift+Tab wrap at both repaired boundaries was verified in a real
+browser on 2026-11-17. The nonfunctional Save control was removed.
 
 ## Checks
 - M1: `npm run typecheck` → exit 0; `npm run build` → exit 0 (`dist/` produced).
-- Browser acceptance tests: specified in `tasks.md`, not run (no runner/DOM
-  library in the manifest; none added).
+- Node state tests: 4 passed. Focused localhost smoke checks covered the bounded
+  repairs; native Tab/Shift+Tab wrap at both repaired boundaries was verified in
+  a real browser on 2026-11-17.

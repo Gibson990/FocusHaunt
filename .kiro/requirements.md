@@ -4,7 +4,7 @@
 FocusHaunt is a small, single-lesson reasoning-and-repair learning experiment
 about keyboard focus. Not a general recorder, scanner, editor, or timeline.
 
-## Core lesson requirements (implemented in M1)
+## Core lesson requirements (M1 accepted 2026-11-17 after independent review)
 - Learner predicts the correct focus target BEFORE observing the defect (the
   opener is disabled outside Observe/Try; Continue is gated).
 - Learner opens and uses the intentionally broken dialog fixture (focus left
@@ -35,15 +35,16 @@ about keyboard focus. Not a general recorder, scanner, editor, or timeline.
   pairs in `design.md`), narrow-screen layout, reduced-motion support.
 
 ## M1 milestone (this milestone)
-Real lesson implemented. See `design.md` for architecture and `tasks.md` for
-verification and acceptance criteria. Available automated checks: `tsc --noEmit`
-and `vite build` (both exit 0). Browser acceptance tests are specified, not run
-(no runner/DOM library in the manifest; none added).
+Six bounded flow repairs are implemented on the WIP branch, and M1 was accepted
+2026-11-17 after independent review. `tsc --noEmit` and `vite build` exited 0;
+four dependency-free state tests passed; production-build browser review covered
+the repaired flow and verified native Tab/Shift+Tab wrap at both boundaries.
 
-## Future tests (specified, NOT run in M1)
-Real-browser Tab/Shift+Tab/Escape/close/reset asserting real focus/DOM (no
-`focus()` helpers, no mode-based PASS); cover prediction/feedback ordering, both
-repaired wrap boundaries, opener restoration, shell access. See `tasks.md`.
+## Remaining acceptance verification
+Real-browser Tab/Shift+Tab asserting real focus/DOM (no `focus()` helpers and no
+mode-based PASS) is met for both repaired wrap boundaries. Screen-reader audit,
+exhaustive repeated-cycle stress, and browsers other than Chrome remain deferred.
+See `tasks.md`.
 
 ## Out of scope (excluded)
 Second case, transfer task, recorder timeline, editor, scanner, extension,

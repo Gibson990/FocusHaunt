@@ -1,4 +1,29 @@
-PARTIAL M1 - BLOCKED / NOT ACCEPTED. Main remains the accepted M0.1 checkpoint.
+M1 ACCEPTED 2026-11-17 after independent review. Main remains the M0.1 checkpoint until an approved merge.
+
+On 2026-11-17, independent production-build browser review verified typecheck,
+build, and all four state tests; native Tab/Shift+Tab wrap at both repaired
+boundaries; Escape, Close, and Cancel opener restoration; repaired aria-modal
+with inert background; incomplete-step and whitespace gating; selection-specific
+feedback and choice changes; explicit repair application; restart focus; no
+horizontal overflow at 1440/390/320; and reduced-motion load. Still unverified:
+screen-reader and full accessibility audits, exhaustive repeated-cycle stress,
+and browsers other than Chrome.
+
+## 2026-11-15 bounded Codex repair run
+
+Codex (not Kiro) implemented six approved repairs on this WIP branch: accessible
+incomplete-step guidance and whitespace gating; selected-repair feedback with a
+Change my choice route; explicit correct-repair application; removal of inert
+Save; useful restart focus; and repaired aria-modal/inert background management.
+`npm run typecheck` and `npm run build` exited 0, four Node state tests passed,
+and focused localhost browser smoke checks verified those flows. Native
+Tab/Shift+Tab boundary traversal remains unverified because the available browser
+control could not produce trustworthy native traversal. No acceptance, commit,
+push, deployment, or submission occurred; independent review remains next.
+
+The remainder of this file is the original 2026-11-14 checkpoint retained as
+history. Its blocker list describes the pre-repair state; the current status
+above governs.
 
 # FocusHaunt M1 restart checkpoint
 

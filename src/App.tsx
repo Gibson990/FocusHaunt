@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { MockupBanner } from './components/MockupBanner'
 import { ProgressionIndicator } from './components/ProgressionIndicator'
 import { DialogFixture } from './components/DialogFixture'
@@ -8,10 +9,15 @@ import { phaseMeta } from './lesson'
 
 export function App() {
   const lesson = useLesson()
+  const firstPredictionRef = useRef<HTMLInputElement>(null)
   const { state } = lesson
   const canOpen = state.phase === 'observe' || state.phase === 'try'
   const meta = phaseMeta.find((m) => m.id === state.phase)
   const isLast = state.phase === 'try'
+  const restart = () => {
+    lesson.restart()
+    requestAnimationFrame(() => firstPredictionRef.current?.focus())
+  }
 
   return (
     <div className="app">
@@ -43,11 +49,15 @@ export function App() {
           observedFocus={state.observedFocus}
           fixtureOpen={state.fixtureOpen}
           appliedRepair={state.appliedRepair}
+          advanceAttempted={state.advanceAttempted}
+          predictionFocusRef={firstPredictionRef}
           onPredicted={lesson.setPredicted}
           onChosenRepair={lesson.setChosenRepair}
           onReflection={lesson.setReflection}
           onCloseFixture={lesson.closeFixture}
           onResetFixture={lesson.resetFixture}
+          onChangeChoice={lesson.changeChoice}
+          onApplyCorrectRepair={lesson.applyCorrectRepair}
         />
       </main>
 
@@ -63,19 +73,18 @@ export function App() {
             Back
           </button>
           {isLast ? (
-            <button type="button" className="btn btn--ghost" onClick={lesson.restart}>
+            <button type="button" className="btn btn--ghost" onClick={restart}>
               Start over
             </button>
-          ) : (
+          ) : state.phase !== 'feedback' ? (
             <button
               type="button"
               className="btn btn--ghost"
               onClick={lesson.next}
-              disabled={!lesson.canAdvance}
             >
               Continue
             </button>
-          )}
+          ) : null}
         </div>
       </div>
 

@@ -30,10 +30,31 @@ export function useDialogFocus<T extends HTMLElement, U extends HTMLElement>({
   onObserved,
 }: UseDialogFocusOptions<T, U>) {
   const wasOpen = useRef(false)
+  const inerted = useRef<HTMLElement[]>([])
   const onCloseRef = useRef(onClose)
   const onObservedRef = useRef(onObserved)
   onCloseRef.current = onClose
   onObservedRef.current = onObserved
+
+  const restoreBackground = () => {
+    inerted.current.forEach((element) => element.removeAttribute('inert'))
+    inerted.current = []
+  }
+
+  const makeBackgroundInert = (container: HTMLElement) => {
+    restoreBackground()
+    let current: HTMLElement = container
+    while (current.parentElement && current.parentElement !== document.body) {
+      const parent = current.parentElement
+      Array.from(parent.children).forEach((sibling) => {
+        if (sibling !== current && sibling instanceof HTMLElement && !sibling.hasAttribute('inert')) {
+          sibling.setAttribute('inert', '')
+          inerted.current.push(sibling)
+        }
+      })
+      current = parent
+    }
+  }
 
   // Move focus on open (repaired only); restore to the opener on close.
   useEffect(() => {
@@ -41,6 +62,7 @@ export function useDialogFocus<T extends HTMLElement, U extends HTMLElement>({
     if (open && !wasOpen.current) {
       wasOpen.current = true
       if (repaired && container) {
+        makeBackgroundInert(container)
         const nameInput = container.querySelector<HTMLInputElement>('input[name="name"]')
         ;(nameInput ?? firstFocusable(container))?.focus()
       }
@@ -48,10 +70,14 @@ export function useDialogFocus<T extends HTMLElement, U extends HTMLElement>({
       onObservedRef.current(describeElement(document.activeElement))
     } else if (!open && wasOpen.current) {
       wasOpen.current = false
+      restoreBackground()
       openerRef.current?.focus()
       onObservedRef.current(null)
     }
     // containerRef/openerRef are stable refs; repaired drives the open behavior.
+    return () => {
+      if (open && repaired) restoreBackground()
+    }
   }, [open, repaired, containerRef, openerRef])
 
   // Escape closes; Tab is contained only when repaired.

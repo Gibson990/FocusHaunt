@@ -89,6 +89,7 @@ export function DialogFixture({
               className="dialog"
               role="dialog"
               aria-labelledby="fh-dlg-title"
+              aria-modal={repaired ? true : undefined}
               ref={dialogRef}
             >
               <div className="dialog__head">
@@ -127,9 +128,6 @@ export function DialogFixture({
               </div>
 
               <div className="dialog__foot">
-                <button type="button" className="btn btn--ghost">
-                  Save
-                </button>
                 <button type="button" className="btn" onClick={onClose}>
                   Cancel
                 </button>

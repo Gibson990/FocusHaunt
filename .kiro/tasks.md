@@ -1,6 +1,6 @@
 # FocusHaunt — Tasks
 
-## M1 — Real lesson (this milestone)
+## M1 — accepted 2026-11-17 after independent review
 - [x] Lesson phase machine: Predict → Observe → Choose → Explain → Feedback →
   Try, order required; Continue is gated, Back revisits, Restart resets.
 - [x] Real non-native dialog fixture: opener opens; broken mode leaves focus
@@ -17,13 +17,22 @@
 - [x] Predict option labels the Name input (not "first focusable control");
   feedback justifies it for this dialog and distinguishes task focus from DOM
   tab order (close button precedes the input).
+- [x] Missing Predict/Choose/Explain input produces accessible inline guidance;
+  whitespace-only reflection cannot advance and remains unscored.
+- [x] Feedback acknowledges the selected repair and offers Change my choice.
+- [x] Apply the correct repair is explicit; the learner choice remains distinct.
+- [x] Removed the inert Save control; restart focuses the first prediction radio.
+- [x] Repaired open uses aria-modal with managed inert background; broken mode
+  deliberately leaves its background available.
 
 ## M1 verification (run this work)
 - `npm run typecheck` → exit 0.
 - `npm run build` → exit 0; `dist/` produced (`index.html` ~0.60 kB,
-  `assets/index-*.js` ~159.6 kB, `assets/index-*.css` ~9.9 kB).
-- Browser acceptance tests: specified below, NOT run (no runner/DOM library in
-  the manifest; none was added).
+  `assets/index-*.js` ~162.0 kB, `assets/index-*.css` ~10.0 kB).
+- `node --test src/lessonState.test.mjs` → 4 passed (installed Node runner).
+- Focused localhost smoke checks passed for the six bounded repairs. Native
+  Tab/Shift+Tab wrap at both repaired boundaries was verified in a real browser
+  on 2026-11-17.
 
 ## M1 acceptance tests (specified; require a runner + DOM not in the manifest)
 - Predict before observe: the opener is disabled outside Observe/Try; Continue
