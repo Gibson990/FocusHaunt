@@ -18,6 +18,8 @@ interface StagePanelProps {
   appliedRepair: RepairId | null
   advanceAttempted: boolean
   predictionFocusRef: RefObject<HTMLInputElement>
+  repairFocusRef: RefObject<HTMLInputElement>
+  feedbackActionRef: RefObject<HTMLButtonElement>
   onPredicted: (value: FocusTargetId | '') => void
   onChosenRepair: (value: RepairId | '') => void
   onReflection: (value: string) => void
@@ -137,7 +139,7 @@ function ObservePanel({ observedFocus, fixtureOpen, onCloseFixture }: StagePanel
   )
 }
 
-function ChoosePanel({ chosenRepair, onChosenRepair, advanceAttempted }: StagePanelProps) {
+function ChoosePanel({ chosenRepair, onChosenRepair, advanceAttempted, repairFocusRef }: StagePanelProps) {
   const name = useId()
   const errorId = useId()
   const showError = advanceAttempted && chosenRepair === ''
@@ -150,7 +152,7 @@ function ChoosePanel({ chosenRepair, onChosenRepair, advanceAttempted }: StagePa
       <fieldset className="repair" aria-describedby={showError ? errorId : undefined}>
         <legend className="repair__legend">Proposed changes</legend>
         <div className="repair__options">
-          {proposedChanges.map((option) => (
+          {proposedChanges.map((option, index) => (
             <label
               key={option.id}
               className={
@@ -165,6 +167,7 @@ function ChoosePanel({ chosenRepair, onChosenRepair, advanceAttempted }: StagePa
                 value={option.id}
                 checked={chosenRepair === option.id}
                 onChange={() => onChosenRepair(option.id)}
+                ref={index === 0 ? repairFocusRef : undefined}
               />
               <span className="repair__name">{option.name}</span>
               <span className="repair__summary">{option.change}</span>
@@ -203,7 +206,7 @@ function ExplainPanel({ reflection, onReflection, advanceAttempted }: StagePanel
   )
 }
 
-function FeedbackPanel({ chosenRepair, onChangeChoice, onApplyCorrectRepair }: StagePanelProps) {
+function FeedbackPanel({ chosenRepair, onChangeChoice, onApplyCorrectRepair, feedbackActionRef }: StagePanelProps) {
   const selected = proposedChanges.find((change) => change.id === chosenRepair)
   const selectedExplanation = selected?.correct ? feedback.whyCorrect : feedback.whyDistractorFails
   return (
@@ -245,7 +248,7 @@ function FeedbackPanel({ chosenRepair, onChangeChoice, onApplyCorrectRepair }: S
         </div>
         <p className="feedback__note">{feedback.reflectionNote}</p>
         <div className="try__actions">
-          <button type="button" className="btn" onClick={onChangeChoice}>Change my choice</button>
+          <button type="button" className="btn" onClick={onChangeChoice} ref={feedbackActionRef}>Change my choice</button>
           <button type="button" className="btn btn--ghost" onClick={onApplyCorrectRepair}>Apply the correct repair</button>
         </div>
       </div>

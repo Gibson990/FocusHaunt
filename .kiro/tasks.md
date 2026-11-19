@@ -1,6 +1,6 @@
 # FocusHaunt — Tasks
 
-## M1 — accepted 2026-11-17 after independent review
+## M1 — accepted 2026-11-17 after independent review; focus repair verified 2026-11-18
 - [x] Lesson phase machine: Predict → Observe → Choose → Explain → Feedback →
   Try, order required; Continue is gated, Back revisits, Restart resets.
 - [x] Real non-native dialog fixture: opener opens; broken mode leaves focus

@@ -3,7 +3,7 @@
 A small, single-lesson reasoning-and-repair learning experiment about keyboard
 focus.
 
-> **Milestone M1 accepted 2026-11-17 after independent review.** The current WIP branch has a required phase
+> **Milestone M1 accepted 2026-11-17 after independent review.** Focus-loss repair verified 2026-11-18. The current WIP branch has a required phase
 > flow (Predict → Observe → Choose → Explain → Feedback → Try), a real
 > non-native dialog fixture that leaves focus behind on open, real Tab/Shift+Tab
 > containment, Escape/close, opener restoration, and a real observed-focus

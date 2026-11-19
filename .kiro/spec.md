@@ -1,4 +1,4 @@
-# FocusHaunt — One-Lesson Spec (M1 accepted 2026-11-17)
+# FocusHaunt — One-Lesson Spec (M1 accepted 2026-11-17; focus repair verified 2026-11-18)
 
 This is the single-lesson reasoning-and-repair specification. It is preserved
 here verbatim-in-intent. The current WIP repair candidate implements a required phase flow, real focus

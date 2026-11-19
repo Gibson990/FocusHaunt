@@ -3,6 +3,7 @@ import test from 'node:test'
 import {
   advanceLessonState,
   applyCorrectRepairState,
+  backLessonState,
   changeChoiceState,
   initialLessonState,
 } from './lessonState.ts'
@@ -33,4 +34,28 @@ test('change choice returns to Choose without applying a repair', () => {
   assert.equal(changed.phase, 'choose')
   assert.equal(changed.chosenRepair, 'repairB')
   assert.equal(changed.appliedRepair, null)
+})
+
+test('Back from open Observe closes the fixture and requests Predict focus', () => {
+  const observe = { ...initialLessonState, phase: 'observe', fixtureOpen: true }
+  const backed = backLessonState(observe)
+  assert.equal(backed.phase, 'predict')
+  assert.equal(backed.fixtureOpen, false)
+  assert.equal(backed.focusDestination, 'prediction')
+})
+
+test('Back from open Try closes the fixture and requests Feedback focus', () => {
+  const trying = { ...initialLessonState, phase: 'try', fixtureOpen: true, appliedRepair: 'repairA' }
+  const backed = backLessonState(trying)
+  assert.equal(backed.phase, 'feedback')
+  assert.equal(backed.fixtureOpen, false)
+  assert.equal(backed.focusDestination, 'feedbackAction')
+})
+
+test('advancing from open Observe closes the fixture and requests Choose focus', () => {
+  const observe = { ...initialLessonState, phase: 'observe', fixtureOpen: true, observedOnce: true }
+  const advanced = advanceLessonState(observe)
+  assert.equal(advanced.phase, 'choose')
+  assert.equal(advanced.fixtureOpen, false)
+  assert.equal(advanced.focusDestination, 'repairChoice')
 })

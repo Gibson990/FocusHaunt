@@ -1,5 +1,21 @@
 M1 ACCEPTED 2026-11-17 after independent review. Main remains the M0.1 checkpoint until an approved merge.
 
+Focus repair 2026-11-18: the 2026-11-17 readiness audit found a confirmed
+focus-loss defect - Back while the fixture was open dropped focus to the
+page body. Repaired: fixture-closing phase changes now move focus to a
+valid destination (first prediction radio from Observe, first repair
+choice from Continue, Change-my-choice from Try at state level). Coverage
+is now 7/7 state tests (four before this repair). Real-browser
+verification on 2026-11-18: in Observe, Escape, X, Cancel and Close
+fixture each restore the opener, and Back or Continue with an open
+fixture move focus to the correct control; in Try, Escape restores the
+opener and Tab/Shift+Tab containment holds (Try's X and Cancel share the
+close path verified in Observe and were not individually clicked there).
+In Try the repaired modal correctly makes Back and Start over
+unreachable while open. Still unverified: screen-reader and full
+accessibility audits, exhaustive repeated-cycle stress, and browsers
+other than Chrome.
+
 On 2026-11-17, independent production-build browser review verified typecheck,
 build, and all four state tests; native Tab/Shift+Tab wrap at both repaired
 boundaries; Escape, Close, and Cancel opener restoration; repaired aria-modal

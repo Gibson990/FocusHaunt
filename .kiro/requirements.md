@@ -4,7 +4,7 @@
 FocusHaunt is a small, single-lesson reasoning-and-repair learning experiment
 about keyboard focus. Not a general recorder, scanner, editor, or timeline.
 
-## Core lesson requirements (M1 accepted 2026-11-17 after independent review)
+## Core lesson requirements (M1 accepted 2026-11-17 after independent review; focus repair verified 2026-11-18)
 - Learner predicts the correct focus target BEFORE observing the defect (the
   opener is disabled outside Observe/Try; Continue is gated).
 - Learner opens and uses the intentionally broken dialog fixture (focus left

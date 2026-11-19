@@ -18,6 +18,7 @@ interface DialogFixtureProps {
   onOpen: () => void
   onClose: () => void
   onObserved: (description: string | null) => void
+  restoreFocusToOpener: boolean
 }
 
 export function DialogFixture({
@@ -28,6 +29,7 @@ export function DialogFixture({
   onOpen,
   onClose,
   onObserved,
+  restoreFocusToOpener,
 }: DialogFixtureProps) {
   const openerRef = useRef<HTMLButtonElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
@@ -40,6 +42,7 @@ export function DialogFixture({
     repaired,
     onClose,
     onObserved,
+    restoreFocusToOpener,
   })
 
   const pillClass = repaired

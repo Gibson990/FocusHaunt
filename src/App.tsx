@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { MockupBanner } from './components/MockupBanner'
 import { ProgressionIndicator } from './components/ProgressionIndicator'
 import { DialogFixture } from './components/DialogFixture'
@@ -10,6 +10,8 @@ import { phaseMeta } from './lesson'
 export function App() {
   const lesson = useLesson()
   const firstPredictionRef = useRef<HTMLInputElement>(null)
+  const firstRepairRef = useRef<HTMLInputElement>(null)
+  const feedbackActionRef = useRef<HTMLButtonElement>(null)
   const { state } = lesson
   const canOpen = state.phase === 'observe' || state.phase === 'try'
   const meta = phaseMeta.find((m) => m.id === state.phase)
@@ -18,6 +20,19 @@ export function App() {
     lesson.restart()
     requestAnimationFrame(() => firstPredictionRef.current?.focus())
   }
+
+  useEffect(() => {
+    const target = state.focusDestination === 'prediction'
+      ? firstPredictionRef.current
+      : state.focusDestination === 'repairChoice'
+        ? firstRepairRef.current
+        : state.focusDestination === 'feedbackAction'
+          ? feedbackActionRef.current
+          : null
+    if (!target) return
+    target.focus()
+    lesson.clearFocusDestination()
+  }, [state.focusDestination, lesson.clearFocusDestination])
 
   return (
     <div className="app">
@@ -40,6 +55,7 @@ export function App() {
           onOpen={lesson.openFixture}
           onClose={lesson.closeFixture}
           onObserved={lesson.setObservedFocus}
+          restoreFocusToOpener={state.focusDestination === null}
         />
         <StagePanel
           phase={state.phase}
@@ -51,6 +67,8 @@ export function App() {
           appliedRepair={state.appliedRepair}
           advanceAttempted={state.advanceAttempted}
           predictionFocusRef={firstPredictionRef}
+          repairFocusRef={firstRepairRef}
+          feedbackActionRef={feedbackActionRef}
           onPredicted={lesson.setPredicted}
           onChosenRepair={lesson.setChosenRepair}
           onReflection={lesson.setReflection}

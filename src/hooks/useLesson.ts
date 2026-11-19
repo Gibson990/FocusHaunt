@@ -5,10 +5,10 @@
 
 import { useCallback, useMemo, useState } from 'react'
 import type { FocusTargetId, RepairId } from '../lesson'
-import { phaseOrder } from '../lesson'
 import {
   advanceLessonState,
   applyCorrectRepairState,
+  backLessonState,
   canAdvanceFrom,
   changeChoiceState,
   initialLessonState,
@@ -38,11 +38,11 @@ export function useLesson() {
   }, [])
 
   const closeFixture = useCallback(() => {
-    setState((s) => ({ ...s, fixtureOpen: false }))
+    setState((s) => ({ ...s, fixtureOpen: false, focusDestination: null }))
   }, [])
 
   const resetFixture = useCallback(() => {
-    setState((s) => ({ ...s, fixtureOpen: false, observedFocus: null }))
+    setState((s) => ({ ...s, fixtureOpen: false, observedFocus: null, focusDestination: null }))
   }, [])
 
   const next = useCallback(() => {
@@ -50,11 +50,7 @@ export function useLesson() {
   }, [])
 
   const back = useCallback(() => {
-    setState((s) => {
-      const idx = phaseOrder.indexOf(s.phase)
-      if (idx <= 0) return s
-      return { ...s, phase: phaseOrder[idx - 1], fixtureOpen: false, observedFocus: null, advanceAttempted: false }
-    })
+    setState(backLessonState)
   }, [])
 
   const restart = useCallback(() => {
@@ -63,6 +59,9 @@ export function useLesson() {
 
   const changeChoice = useCallback(() => setState(changeChoiceState), [])
   const applyCorrectRepair = useCallback(() => setState(applyCorrectRepairState), [])
+  const clearFocusDestination = useCallback(() => {
+    setState((s) => ({ ...s, focusDestination: null }))
+  }, [])
 
   const canAdvance = useMemo(() => canAdvanceFrom(state), [state])
 
@@ -80,6 +79,7 @@ export function useLesson() {
     restart,
     changeChoice,
     applyCorrectRepair,
+    clearFocusDestination,
     canAdvance,
   }
 }

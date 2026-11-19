@@ -1,5 +1,7 @@
 import type { FocusTargetId, LessonPhase, RepairId } from './lesson'
 
+export type FocusDestination = 'prediction' | 'repairChoice' | 'feedbackAction'
+
 export interface LessonState {
   phase: LessonPhase
   predicted: FocusTargetId | ''
@@ -10,6 +12,7 @@ export interface LessonState {
   fixtureOpen: boolean
   appliedRepair: RepairId | null
   advanceAttempted: boolean
+  focusDestination: FocusDestination | null
 }
 
 export const initialLessonState: LessonState = {
@@ -22,6 +25,16 @@ export const initialLessonState: LessonState = {
   fixtureOpen: false,
   appliedRepair: null,
   advanceAttempted: false,
+  focusDestination: null,
+}
+
+function focusDestinationFor(phase: LessonPhase): FocusDestination | null {
+  switch (phase) {
+    case 'predict': return 'prediction'
+    case 'choose': return 'repairChoice'
+    case 'feedback': return 'feedbackAction'
+    default: return null
+  }
 }
 
 export function canAdvanceFrom(state: LessonState): boolean {
@@ -48,6 +61,22 @@ export function advanceLessonState(state: LessonState): LessonState {
     observedFocus: null,
     observedOnce: phase === 'observe' ? false : state.observedOnce,
     advanceAttempted: false,
+    focusDestination: state.fixtureOpen ? focusDestinationFor(phase) : null,
+  }
+}
+
+export function backLessonState(state: LessonState): LessonState {
+  const order: LessonPhase[] = ['predict', 'observe', 'choose', 'explain', 'feedback', 'try']
+  const index = order.indexOf(state.phase)
+  if (index <= 0) return state
+  const phase = order[index - 1]
+  return {
+    ...state,
+    phase,
+    fixtureOpen: false,
+    observedFocus: null,
+    advanceAttempted: false,
+    focusDestination: state.fixtureOpen ? focusDestinationFor(phase) : null,
   }
 }
 

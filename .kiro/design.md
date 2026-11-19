@@ -70,12 +70,13 @@ on `--danger-soft` ~4.83:1. All meaningful pairs >= 4.5:1. Not a full audit.
 
 ## Mocked vs functional (M1)
 Functional in the WIP repair candidate: phase machine + incomplete-step guidance
-real fixture focus management + observed-focus readout + explicit repair
++ real fixture focus management + observed-focus readout + explicit repair
 application + unscored reflection + selection-specific feedback.
 Native Tab/Shift+Tab wrap at both repaired boundaries was verified in a real
 browser on 2026-11-17. The nonfunctional Save control was removed.
 
 ## Checks
+- Fixture-closing phase changes verified to keep real focus (Back/Continue with an open fixture) in a real browser on 2026-11-18.
 - M1: `npm run typecheck` → exit 0; `npm run build` → exit 0 (`dist/` produced).
 - Node state tests: 4 passed. Focused localhost smoke checks covered the bounded
   repairs; native Tab/Shift+Tab wrap at both repaired boundaries was verified in

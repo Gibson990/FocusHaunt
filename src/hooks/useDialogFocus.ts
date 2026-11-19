@@ -19,6 +19,7 @@ interface UseDialogFocusOptions<T extends HTMLElement, U extends HTMLElement> {
   repaired: boolean
   onClose: () => void
   onObserved: (description: string | null) => void
+  restoreFocusToOpener: boolean
 }
 
 export function useDialogFocus<T extends HTMLElement, U extends HTMLElement>({
@@ -28,6 +29,7 @@ export function useDialogFocus<T extends HTMLElement, U extends HTMLElement>({
   repaired,
   onClose,
   onObserved,
+  restoreFocusToOpener,
 }: UseDialogFocusOptions<T, U>) {
   const wasOpen = useRef(false)
   const inerted = useRef<HTMLElement[]>([])
@@ -71,14 +73,14 @@ export function useDialogFocus<T extends HTMLElement, U extends HTMLElement>({
     } else if (!open && wasOpen.current) {
       wasOpen.current = false
       restoreBackground()
-      openerRef.current?.focus()
+      if (restoreFocusToOpener) openerRef.current?.focus()
       onObservedRef.current(null)
     }
     // containerRef/openerRef are stable refs; repaired drives the open behavior.
     return () => {
       if (open && repaired) restoreBackground()
     }
-  }, [open, repaired, containerRef, openerRef])
+  }, [open, repaired, restoreFocusToOpener, containerRef, openerRef])
 
   // Escape closes; Tab is contained only when repaired.
   useEffect(() => {
