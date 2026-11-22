@@ -170,6 +170,24 @@ p {
   font-weight: 700;
 }
 
+.progression__keys {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.progression__keys kbd {
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  padding: 0 4px;
+  white-space: nowrap;
+}
+
 .progression__hint {
   margin-top: 6px;
   font-size: 0.8rem;
@@ -503,6 +521,16 @@ p {
 
 .panel__title {
   font-size: 1.05rem;
+}
+
+.panel__cue {
+  margin-top: 8px;
+  font-size: 0.88rem;
+  color: var(--ink);
+  background: var(--ghost-soft);
+  border: 1px solid var(--ghost-line);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
 }
 
 .panel__note {

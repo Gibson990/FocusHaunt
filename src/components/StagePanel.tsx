@@ -15,6 +15,7 @@ interface StagePanelProps {
   reflection: string
   observedFocus: string | null
   fixtureOpen: boolean
+  fixtureObserved: boolean
   appliedRepair: RepairId | null
   advanceAttempted: boolean
   predictionFocusRef: RefObject<HTMLInputElement>
@@ -51,12 +52,13 @@ interface PanelProps {
   phase: LessonPhase
   title: string
   note?: string
+  cue?: string
   answer?: boolean
   headingRef?: RefObject<HTMLHeadingElement>
   children: ReactNode
 }
 
-function Panel({ phase, title, note, answer, headingRef, children }: PanelProps) {
+function Panel({ phase, title, note, cue, answer, headingRef, children }: PanelProps) {
   const meta = phaseMeta.find((m) => m.id === phase)
   const className = answer
     ? 'panel__section panel__section--answer'
@@ -67,6 +69,7 @@ function Panel({ phase, title, note, answer, headingRef, children }: PanelProps)
         <p className="panel__step">{meta?.label ?? phase}</p>
         <h2 className="panel__title" tabIndex={headingRef ? -1 : undefined} ref={headingRef}>{title}</h2>
       </header>
+      {cue ? <p className="panel__cue"><strong>Next:</strong> {cue}</p> : null}
       {note ? <p className="panel__note">{note}</p> : null}
       <div className="panel__body">{children}</div>
     </section>
@@ -81,6 +84,7 @@ function PredictPanel({ predicted, onPredicted, advanceAttempted, predictionFocu
     <Panel
       phase="predict"
       title="Where should focus go when the dialog opens?"
+      cue="Pick where you think focus should go when the dialog opens, then press Continue. No answer is shown yet."
       note="Predict before observing. No expected target or answer is shown here."
     >
       <fieldset className="predict" aria-describedby={showError ? errorId : undefined}>
@@ -107,11 +111,13 @@ function PredictPanel({ predicted, onPredicted, advanceAttempted, predictionFocu
   )
 }
 
-function ObservePanel({ observedFocus, fixtureOpen, onCloseFixture }: StagePanelProps) {
+function ObservePanel({ observedFocus, fixtureOpen, fixtureObserved, advanceAttempted, onCloseFixture }: StagePanelProps) {
+  const showError = advanceAttempted && !fixtureObserved && !fixtureOpen
   return (
     <Panel
       phase="observe"
       title="Observe the real focus"
+      cue="Open the fixture and watch where focus actually stays. Try Tab and Escape, then press Continue when you have looked."
       note="Open the broken fixture with the opener button above. The observed focus is the real document.activeElement — not a fake highlight or mode label."
     >
       <div className="focus">
@@ -130,6 +136,7 @@ function ObservePanel({ observedFocus, fixtureOpen, onCloseFixture }: StagePanel
           </p>
         </div>
       </div>
+      {showError ? <p className="inline-guidance" role="alert">Open the fixture before continuing.</p> : null}
       {fixtureOpen && (
         <div className="try__actions">
           <button type="button" className="btn" onClick={onCloseFixture}>
@@ -149,6 +156,7 @@ function ChoosePanel({ chosenRepair, onChosenRepair, advanceAttempted, repairFoc
     <Panel
       phase="choose"
       title="Pick a bundled repair"
+      cue="Read both repairs and pick one. You can change your choice later."
       note="Neutral descriptions only — which repair is correct is shown only in the Feedback stage."
     >
       <fieldset className="repair" aria-describedby={showError ? errorId : undefined}>
@@ -189,6 +197,7 @@ function ExplainPanel({ reflection, onReflection, advanceAttempted }: StagePanel
     <Panel
       phase="explain"
       title="Reflection (unscored)"
+      cue="Write one honest sentence before the answer appears. It is not graded."
       note="Self-explanation only — NOT graded or assessed. Feedback comes after this step."
     >
       <label className="reflection">
@@ -216,6 +225,7 @@ function FeedbackPanel({ phaseHeadingRef, chosenRepair, onChangeChoice, onApplyC
       phase="feedback"
       headingRef={phaseHeadingRef}
       title="Feedback"
+      cue="Compare the answer with your prediction, then change your choice or apply the correct repair."
       answer
       note="The answers. Separate from the prediction view."
     >
@@ -265,6 +275,7 @@ function TryPanel({ phaseHeadingRef, appliedRepair, onResetFixture }: StagePanel
       phase="try"
       headingRef={phaseHeadingRef}
       title="Experience the repaired behavior"
+      cue="Open the repaired dialog and feel the difference: Tab stays inside, Escape closes."
       note="The correct bundled repair (Repair A) is applied to the fixture above. Open it to experience the real repaired behavior — not an edited copy of your code."
     >
       <p className="try__copy">

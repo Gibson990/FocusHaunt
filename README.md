@@ -1,53 +1,44 @@
 # FocusHaunt
 
-A small, single-lesson reasoning-and-repair learning experiment about keyboard
-focus.
+A one-lesson interactive experiment about a real keyboard-focus bug.
 
-> **Milestone M1 accepted 2026-11-17 after independent review.** Focus-loss repair verified 2026-11-18. The current WIP branch has a required phase
-> flow (Predict → Observe → Choose → Explain → Feedback → Try), a real
-> non-native dialog fixture that leaves focus behind on open, real Tab/Shift+Tab
-> containment, Escape/close, opener restoration, and a real observed-focus
-> readout (document.activeElement), accessible incomplete-step guidance,
-> selection-specific feedback, explicit repair application, and restart focus.
-> Answers appear only in the Feedback stage.
-> See `.kiro/` for requirements, design, tasks, and the preserved one-lesson spec.
+**Live demo:** _TODO: add the hosted URL here once the project is deployed._
 
-## Stack
-Vite + React + TypeScript. Dependencies are present via the documented review
-path (`npm ci --ignore-scripts --no-audit --no-fund`). No packages were
-installed, committed, pushed, or deployed during this work.
+## The lesson
 
-## Scripts
+A modal dialog opens, but keyboard focus stays behind on the page. FocusHaunt walks you through:
+
+1. **Predict** where focus should go when the dialog opens.
+2. **Observe** a real, broken dialog and read the browser's actual `document.activeElement`.
+3. **Choose** one of two bundled repairs.
+4. **Explain** your choice in a sentence (unscored).
+5. **Feedback** shows the answer, only at this stage.
+6. **Try** the repaired dialog: focus moves in on open, Tab and Shift+Tab stay inside, Escape closes, and focus returns to the opener.
+
+## Run it
+
 ```sh
-npm run dev        # vite dev server
-npm run build      # tsc --noEmit && vite build
-npm run typecheck  # tsc --noEmit
-npm run preview    # vite preview
+npm ci
+npm run dev        # local dev server
+npm run build      # typecheck + production build into dist/
+node --test src/lessonState.test.mjs   # lesson state tests
 ```
 
-## M1 verification (run this work)
-- `npm run typecheck` → exit 0 (no type errors).
-- `npm run build` → exit 0; `dist/` produced: `index.html` (~0.60 kB),
-  `assets/index-*.js` (~162.0 kB), `assets/index-*.css` (~10.0 kB).
-- `node --test src/lessonState.test.mjs` → 4 tests passed using Node's installed
-  test runner; no package was added.
-- Focused localhost browser smoke checks covered the six bounded repairs. Real-browser
-  Tab/Shift+Tab wrap at both repaired boundaries was verified 2026-11-17.
+`npm run typecheck` runs the type check alone.
 
-## Real behavior (M1)
-- Phase order is required and enforced; attempted incomplete steps show inline
-  guidance and whitespace-only reflection cannot advance.
-- Observe reads the real `document.activeElement`; no fake highlight or mode label.
-- The broken fixture leaves focus behind on open; Tab is not contained.
-- The repaired fixture (Repair A applied in Try) moves focus to the Name input on
-  open, contains Tab/Shift+Tab at both boundaries, closes on Escape/close, and
-  restores focus to the opener.
-- Reflection is unscored and precedes selection-specific feedback. A labelled
-  action applies the correct bundled repair; it is not described as editing code.
+## Structure
+
+- `src/lesson.ts`, `src/lessonState.ts`, `src/hooks/`: lesson content, the phase state machine, and the hook that drives it.
+- `src/components/`: stage panels, the dialog fixture (broken and repaired), progress indicator, banner and footer.
+- `src/lessonState.test.mjs`: tests for phase order, gating, and focus destinations.
+
+## Specs
+
+Requirements, design, and tasks are in [`.kiro/`](.kiro/).
 
 ## Scope
-One lesson only. Excluded: second case, transfer task, recorder timeline,
-editor, scanner, extension, arbitrary URLs/uploads, runtime AI, accounts/backend,
-external-site access, user tracking, export generation, automatic grading. No
-claim of validated learning transfer, uniqueness, compliance, production
-readiness, or prize likelihood. See `.kiro/requirements.md`.
+
+- One lesson only: no second case, accounts, backend, or runtime AI.
+- Reflection is unscored. Nothing is graded.
+- The observed focus is the browser's real `document.activeElement`, not a simulation.
+- No claim is made that this lesson improves learning. It is an experiment, not a validated course.

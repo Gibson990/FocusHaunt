@@ -67,6 +67,7 @@ export function App() {
           reflection={state.reflection}
           observedFocus={state.observedFocus}
           fixtureOpen={state.fixtureOpen}
+          fixtureObserved={state.observedOnce}
           appliedRepair={state.appliedRepair}
           advanceAttempted={state.advanceAttempted}
           predictionFocusRef={firstPredictionRef}

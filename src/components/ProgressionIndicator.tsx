@@ -41,6 +41,10 @@ export function ProgressionIndicator({ current }: ProgressionIndicatorProps) {
       <p className="progression__hint">
         Order is required. The current stage is highlighted; you cannot skip ahead.
       </p>
+      <p className="progression__keys">
+        <strong>Keys:</strong> <kbd>Tab</kbd> / <kbd>Shift+Tab</kbd> move focus. <kbd>Enter</kbd> activates the
+        focused button. In option groups, arrow keys move and <kbd>Space</kbd> selects. <kbd>Esc</kbd> closes a dialog.
+      </p>
     </nav>
   )
 }
