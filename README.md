@@ -42,3 +42,7 @@ Requirements, design, and tasks are in [`.kiro/`](.kiro/).
 - Reflection is unscored. Nothing is graded.
 - The observed focus is the browser's real `document.activeElement`, not a simulation.
 - No claim is made that this lesson improves learning. It is an experiment, not a validated course.
+
+## License
+
+MIT - see [LICENSE](LICENSE).
