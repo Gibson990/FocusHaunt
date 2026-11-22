@@ -1,6 +1,6 @@
 import type { FocusTargetId, LessonPhase, RepairId } from './lesson'
 
-export type FocusDestination = 'prediction' | 'repairChoice' | 'feedbackAction'
+export type FocusDestination = 'prediction' | 'repairChoice' | 'feedbackAction' | 'phaseHeading'
 
 export interface LessonState {
   phase: LessonPhase
@@ -61,7 +61,9 @@ export function advanceLessonState(state: LessonState): LessonState {
     observedFocus: null,
     observedOnce: phase === 'observe' ? false : state.observedOnce,
     advanceAttempted: false,
-    focusDestination: state.fixtureOpen ? focusDestinationFor(phase) : null,
+    focusDestination: state.fixtureOpen
+      ? focusDestinationFor(phase)
+      : state.phase === 'explain' ? 'phaseHeading' : null,
   }
 }
 
@@ -76,16 +78,18 @@ export function backLessonState(state: LessonState): LessonState {
     fixtureOpen: false,
     observedFocus: null,
     advanceAttempted: false,
-    focusDestination: state.fixtureOpen ? focusDestinationFor(phase) : null,
+    focusDestination: state.fixtureOpen
+      ? focusDestinationFor(phase)
+      : phase === 'predict' ? 'prediction' : null,
   }
 }
 
 export function applyCorrectRepairState(state: LessonState): LessonState {
   if (state.phase !== 'feedback') return state
-  return { ...state, phase: 'try', appliedRepair: 'repairA', fixtureOpen: false, observedFocus: null }
+  return { ...state, phase: 'try', appliedRepair: 'repairA', fixtureOpen: false, observedFocus: null, focusDestination: 'phaseHeading' }
 }
 
 export function changeChoiceState(state: LessonState): LessonState {
   if (state.phase !== 'feedback') return state
-  return { ...state, phase: 'choose', appliedRepair: null, fixtureOpen: false, observedFocus: null, advanceAttempted: false }
+  return { ...state, phase: 'choose', appliedRepair: null, fixtureOpen: false, observedFocus: null, advanceAttempted: false, focusDestination: 'repairChoice' }
 }

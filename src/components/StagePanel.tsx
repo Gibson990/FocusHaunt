@@ -20,6 +20,7 @@ interface StagePanelProps {
   predictionFocusRef: RefObject<HTMLInputElement>
   repairFocusRef: RefObject<HTMLInputElement>
   feedbackActionRef: RefObject<HTMLButtonElement>
+  phaseHeadingRef: RefObject<HTMLHeadingElement>
   onPredicted: (value: FocusTargetId | '') => void
   onChosenRepair: (value: RepairId | '') => void
   onReflection: (value: string) => void
@@ -51,10 +52,11 @@ interface PanelProps {
   title: string
   note?: string
   answer?: boolean
+  headingRef?: RefObject<HTMLHeadingElement>
   children: ReactNode
 }
 
-function Panel({ phase, title, note, answer, children }: PanelProps) {
+function Panel({ phase, title, note, answer, headingRef, children }: PanelProps) {
   const meta = phaseMeta.find((m) => m.id === phase)
   const className = answer
     ? 'panel__section panel__section--answer'
@@ -63,7 +65,7 @@ function Panel({ phase, title, note, answer, children }: PanelProps) {
     <section className={className}>
       <header className="panel__head">
         <p className="panel__step">{meta?.label ?? phase}</p>
-        <h2 className="panel__title">{title}</h2>
+        <h2 className="panel__title" tabIndex={headingRef ? -1 : undefined} ref={headingRef}>{title}</h2>
       </header>
       {note ? <p className="panel__note">{note}</p> : null}
       <div className="panel__body">{children}</div>
@@ -206,12 +208,13 @@ function ExplainPanel({ reflection, onReflection, advanceAttempted }: StagePanel
   )
 }
 
-function FeedbackPanel({ chosenRepair, onChangeChoice, onApplyCorrectRepair, feedbackActionRef }: StagePanelProps) {
+function FeedbackPanel({ phaseHeadingRef, chosenRepair, onChangeChoice, onApplyCorrectRepair, feedbackActionRef }: StagePanelProps) {
   const selected = proposedChanges.find((change) => change.id === chosenRepair)
   const selectedExplanation = selected?.correct ? feedback.whyCorrect : feedback.whyDistractorFails
   return (
     <Panel
       phase="feedback"
+      headingRef={phaseHeadingRef}
       title="Feedback"
       answer
       note="The answers. Separate from the prediction view."
@@ -256,10 +259,11 @@ function FeedbackPanel({ chosenRepair, onChangeChoice, onApplyCorrectRepair, fee
   )
 }
 
-function TryPanel({ appliedRepair, onResetFixture }: StagePanelProps) {
+function TryPanel({ phaseHeadingRef, appliedRepair, onResetFixture }: StagePanelProps) {
   return (
     <Panel
       phase="try"
+      headingRef={phaseHeadingRef}
       title="Experience the repaired behavior"
       note="The correct bundled repair (Repair A) is applied to the fixture above. Open it to experience the real repaired behavior — not an edited copy of your code."
     >

@@ -12,6 +12,7 @@ export function App() {
   const firstPredictionRef = useRef<HTMLInputElement>(null)
   const firstRepairRef = useRef<HTMLInputElement>(null)
   const feedbackActionRef = useRef<HTMLButtonElement>(null)
+  const phaseHeadingRef = useRef<HTMLHeadingElement>(null)
   const { state } = lesson
   const canOpen = state.phase === 'observe' || state.phase === 'try'
   const meta = phaseMeta.find((m) => m.id === state.phase)
@@ -28,7 +29,9 @@ export function App() {
         ? firstRepairRef.current
         : state.focusDestination === 'feedbackAction'
           ? feedbackActionRef.current
-          : null
+          : state.focusDestination === 'phaseHeading'
+            ? phaseHeadingRef.current
+            : null
     if (!target) return
     target.focus()
     lesson.clearFocusDestination()
@@ -69,6 +72,7 @@ export function App() {
           predictionFocusRef={firstPredictionRef}
           repairFocusRef={firstRepairRef}
           feedbackActionRef={feedbackActionRef}
+          phaseHeadingRef={phaseHeadingRef}
           onPredicted={lesson.setPredicted}
           onChosenRepair={lesson.setChosenRepair}
           onReflection={lesson.setReflection}

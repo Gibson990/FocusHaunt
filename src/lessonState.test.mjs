@@ -59,3 +59,29 @@ test('advancing from open Observe closes the fixture and requests Choose focus',
   assert.equal(advanced.fixtureOpen, false)
   assert.equal(advanced.focusDestination, 'repairChoice')
 })
+
+test('Explain Continue to Feedback requests the Feedback heading, not an action', () => {
+  const explain = { ...initialLessonState, phase: 'explain', reflection: 'because' }
+  const advanced = advanceLessonState(explain)
+  assert.equal(advanced.phase, 'feedback')
+  assert.equal(advanced.focusDestination, 'phaseHeading')
+})
+
+test('Apply the correct repair requests the Try heading', () => {
+  const applied = applyCorrectRepairState({ ...initialLessonState, phase: 'feedback', chosenRepair: 'repairB' })
+  assert.equal(applied.phase, 'try')
+  assert.equal(applied.focusDestination, 'phaseHeading')
+})
+
+test('Change my choice requests the first repair choice', () => {
+  const changed = changeChoiceState({ ...initialLessonState, phase: 'feedback', chosenRepair: 'repairB' })
+  assert.equal(changed.phase, 'choose')
+  assert.equal(changed.focusDestination, 'repairChoice')
+})
+
+test('Back into Predict (Back becomes disabled) requests Predict focus; other closed Back/Continue request none', () => {
+  assert.equal(backLessonState({ ...initialLessonState, phase: 'observe' }).focusDestination, 'prediction')
+  assert.equal(backLessonState({ ...initialLessonState, phase: 'choose' }).focusDestination, null)
+  assert.equal(advanceLessonState({ ...initialLessonState, phase: 'predict', predicted: 'x' }).focusDestination, null)
+  assert.equal(advanceLessonState({ ...initialLessonState, phase: 'choose', chosenRepair: 'repairA' }).focusDestination, null)
+})
